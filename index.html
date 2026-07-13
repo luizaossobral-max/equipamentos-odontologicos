@@ -2203,11 +2203,19 @@ function renderFin() {
 
   var gt = document.getElementById('gastos-tbody');
   if (!filtGastos.length) {
-    gt.innerHTML = '<tr><td colspan="7" class="empty">Nenhum gasto encontrado. Clique em "+ Registrar gasto".</td></tr>';
+    gt.innerHTML = '<tr><td colspan="7" class="empty">Nenhum gasto encontrado.</td></tr>';
   } else {
     gt.innerHTML = filtGastos.map(function(g){
-      return '<tr><td>'+fmtDate(g.data)+'</td><td><span class="pill mn">'+g.tipo+'</span></td><td>'+(g.equipamento||'—')+'</td><td>'+(g.ubs||'—')+'</td><td style="font-size:13px;color:var(--tx2)">'+(g.descricao||'—')+'</td><td style="font-weight:700">R$ '+(g.valor||0).toFixed(2)+'</td>'+
-        '<td><div class="tda"><button class="btn rd" style="font-size:12px;padding:3px 8px" onclick="delRecord('gastos',''+g.id+'','Gasto')">Excluir</button></div></td></tr>';
+      var row = '<tr>';
+      row += '<td>' + fmtDate(g.data) + '</td>';
+      row += '<td><span class="pill mn">' + g.tipo + '</span></td>';
+      row += '<td>' + (g.equipamento || '—') + '</td>';
+      row += '<td>' + (g.ubs || '—') + '</td>';
+      row += '<td>' + (g.descricao || '—') + '</td>';
+      row += '<td style="font-weight:700">R$ ' + (g.valor || 0).toFixed(2) + '</td>';
+      row += '<td><button class="btn rd" style="font-size:12px;padding:3px 8px" data-tbl="gastos" data-id="' + g.id + '" data-lbl="Gasto" onclick="delFromBtn(this)">Excluir</button></td>';
+      row += '</tr>';
+      return row;
     }).join('');
   }
 
@@ -2616,6 +2624,15 @@ exportCSV = async function(tipo) {
     _origExportCSV(tipo);
   }
 };
+
+
+// Helper for delete buttons built via string concatenation
+function delFromBtn(btn) {
+  var tbl = btn.getAttribute('data-tbl');
+  var id  = btn.getAttribute('data-id');
+  var lbl = btn.getAttribute('data-lbl');
+  delRecord(tbl, id, lbl);
+}
 
 </script>
 </body>
